@@ -941,6 +941,7 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 		return 0
 
 	var/skip_check = 0
+	var/eat_through = 0
 	//skip the check if:
 	if(istype(toEat, /obj/item/weapon/reagent_containers/food/pill/patch))
 		//the item being fed is a patch (they typically aren't applied to the mouth anyways)
@@ -948,16 +949,14 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 
 	if(!skip_check)
 		var/covered = 0
-		var/snowflek = 0
 		if(head && (head.flags_cover & HEADCOVERSMOUTH))
-			if(istype(head, /obj/item/clothing/head/helmet/space/eva/plasmaman))
-				snowflek = 1
+			if(head.flags & EAT_THROUGH)
+				eat_through = 1
 			else
 				covered = 1
 		if(wear_mask && (wear_mask.flags_cover & MASKCOVERSMOUTH) && !wear_mask.mask_adjusted)
-			if(snowflek)
-				if(!istype(wear_mask, /obj/item/clothing/mask/breath))
-					covered = 1
+			if(wear_mask.flags & EAT_THROUGH)
+				eat_through = 1
 			else
 				covered = 1
 		if(covered)
@@ -977,17 +976,16 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 				visible_message("<span class='warning'>[user] pushes [toEat] into the face of [src], but their mouth is covered!</span>")
 			return 0
 
-
 	var/fullness = nutrition + 10
 	if(istype(toEat, /obj/item/weapon/reagent_containers/food/snacks))
 		for(var/datum/reagent/consumable/C in reagents.reagent_list) //we add the nutrition value of what we're currently digesting
 			fullness += C.nutriment_factor * C.volume / (C.metabolization_rate * metabolism_efficiency * digestion_ratio)
 	if(user == src)
 		if(istype(toEat, /obj/item/weapon/reagent_containers/food/drinks))
-			if(!selfDrink(toEat))
+			if(!selfDrink(toEat, user, eat_through))
 				return 0
 		else
-			if(!selfFeed(toEat, fullness))
+			if(!selfFeed(toEat, fullness, eat_through))
 				return 0
 	else
 		if(!forceFed(toEat, user, fullness))
@@ -996,10 +994,12 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 	score_foodeaten++
 	return 1
 
-/mob/living/carbon/proc/selfFeed(var/obj/item/weapon/reagent_containers/food/toEat, fullness)
+/mob/living/carbon/proc/selfFeed(var/obj/item/weapon/reagent_containers/food/toEat, fullness, var/eating_through = 0)
 	if(ispill(toEat))
 		to_chat(src, "<span class='notify'>You [toEat.apply_method] [toEat].</span>")
 	else
+		if(eating_through && !do_mob(src, src, 20))
+			return 0
 		if(toEat.junkiness && satiety < -150 && nutrition > NUTRITION_LEVEL_STARVING + 50 )
 			to_chat(src, "<span class='notice'>You don't feel like eating any more junk food at the moment.</span>")
 			return 0
@@ -1016,7 +1016,9 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 			return 0
 	return 1
 
-/mob/living/carbon/proc/selfDrink(var/obj/item/weapon/reagent_containers/food/drinks/toDrink, mob/user)
+/mob/living/carbon/proc/selfDrink(var/obj/item/weapon/reagent_containers/food/drinks/toDrink, mob/user, var/eating_through = 0)
+	if(eating_through && !do_mob(src, src, 20))
+		return 0
 	return 1
 
 /mob/living/carbon/proc/forceFed(var/obj/item/weapon/reagent_containers/food/toEat, mob/user, fullness)

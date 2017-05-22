@@ -69,7 +69,7 @@
 /obj/item/clothing/head/helmet/space/eva/plasmaman
 	name = "plasmaman helmet"
 	desc = "A special containment helmet designed to protect a plasmaman's volatile body from outside exposure and quickly extinguish it in emergencies."
-	flags = STOPSPRESSUREDMAGE
+	flags = STOPSPRESSUREDMAGE|EAT_THROUGH
 	icon = 'icons/obj/clothing/species/plasmaman/hats.dmi'
 	species_restricted = list("Plasmaman")
 	sprite_sheets = list(

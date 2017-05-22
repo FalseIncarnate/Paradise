@@ -42,7 +42,7 @@
 	if(assigned_role != "Clown")
 		H.unEquip(H.wear_mask)
 
-	H.equip_or_collect(new /obj/item/clothing/mask/breath(H), slot_wear_mask)
+	H.equip_or_collect(new /obj/item/clothing/mask/breath/plasmaman(H), slot_wear_mask)
 	var/suit=/obj/item/clothing/suit/space/eva/plasmaman/assistant
 	var/helm=/obj/item/clothing/head/helmet/space/eva/plasmaman/assistant
 	var/tank_slot = slot_s_store

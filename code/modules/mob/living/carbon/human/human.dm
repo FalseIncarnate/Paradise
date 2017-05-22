@@ -2001,7 +2001,7 @@
 			to_chat(src, "<span class='notice'>You pour a bit of liquid from [toDrink] into your connection port.</span>")
 	else
 		to_chat(src, "<span class='notice'>You swallow a gulp of [toDrink].</span>")
-	return 1
+	return ..()
 
 /mob/living/carbon/human/can_track(mob/living/user)
 	if(wear_id)
