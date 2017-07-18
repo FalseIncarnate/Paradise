@@ -48,3 +48,82 @@
 	if(sword)
 		//if we have a highlander sword in the other hand, relearn the style from that sword.
 		sword.style.teach(H, 1)
+
+
+//////////////////////////////////
+//		LEGENDARY SWORDS		//
+//////////////////////////////////
+
+/obj/item/weapon/claymore/highlander/thunderfury
+	name = "\[Thunderfury, Blessed Blade of the Windseeker\]"
+	desc = "Did someone say..."
+	force = 30	//lower base damage, but has a chance to strike the victim with lightning
+
+/obj/item/weapon/claymore/highlander/thunderfury/afterattack(atom/target, mob/user, proximity)
+	if(!proximity)
+		return
+
+	if(isliving(target))
+		var/mob/living/victim = target
+		if(prob(15))
+			var/icon/I=new('icons/obj/zap.dmi',"lightningend")
+			I.Turn(-135)
+			var/obj/effect/overlay/beam/B = new(get_turf(victim))
+			B.pixel_x = rand(-20, 0)
+			B.pixel_y = rand(-20, 0)
+			B.icon = I
+			victim.electrocute_act(rand(40, 100), src, 0.5, tesla_shock = 1)		//this should zap them for 20-50 damage but NOT stun them.
+
+/obj/item/weapon/claymore/highlander/iajutsu
+	name = "Iajutsu Katana"
+	desc = "Faster than the eye, they'll be dead before they realize it."
+	force = 0	//does no damage on hit, but instead stores hits and deals damage on command based on the number of hits stored
+	var/hit_dam = 10	//the amount of damage each strike does when triggered
+	var/gib_threshold = 300		//the minimum amount of damage needed to be dealt at once to just outright gib the victim (below this just deals damage normally)
+	var/list/strikes = list()
+	var/sheathed = 1
+
+/obj/item/weapon/claymore/highlander/iajutsu/Destroy()
+	strikes.Cut()
+	..()
+
+/obj/item/weapon/claymore/highlander/iajutsu/attack_self(mob/user)
+	sheathed = !sheathed
+	to_chat(user, "<span class='warning'>You [sheathed ? "draw" : "sheathe"] your blade.</span>")
+	if(sheathed)
+		playsound(user, 'sound/weapons/blade_sheathe.ogg', 50, 1)
+		trigger_damage(user)
+	else
+		playsound(user, 'sound/weapons/blade_unsheathe.ogg', 50, 1)
+
+/obj/item/weapon/claymore/highlander/iajutsu/proc/trigger_damage(mob/user)
+	var/victim_gibbed = 0
+	for(var/mob/living/L in strikes)
+		var/dam_to_deal = strikes[L] * hit_dam
+		if(dam_to_deal >= gib_threshold)		//fountain of blood, in the most animu fashion
+			L.gib()
+			victim_gibbed = 1
+		else
+			if(ishuman(L))
+				var/mob/living/carbon/human/H = L
+				H.take_overall_damage(dam_to_deal, 0, sharp = 1, edge = 1, used_weapon = "A thousand cuts")
+			else if(is_robot(L))
+				var/mob/living/silicon/robot/R = L
+				R.take_overall_damage(dam_to_deal, 0, sharp = 1, used_weapon = "A thousand cuts")
+			else
+				L.take_overall_damage(dam_to_deal, 0, used_weapon = "A thousand cuts")	//this apparently doesn't have the sharp or edge arguments the subtype versions get
+		strikes[L] = 0
+		strikes.Remove(L)
+	if(victim_gibbed)
+		var/taunt = pick("Nothing personal, kid.", "Ryujin no ken o kurae!", "They were already dead.", "They blinked.", "Dishonorable fool.", "I win.")
+		user.say(taunt)
+
+/obj/item/weapon/claymore/highlander/iajutsu/afterattack(atom/A, mob/user, proximity)
+	if(!proximity)
+		return
+	if(isliving(A))
+		var/mob/living/L = A
+		if(L in strikes)
+			strikes[L]++
+		else
+			strikes[L] = 1
