@@ -279,3 +279,6 @@
 		var/client/C = client
 		for(var/mob/living/carbon/human/H in view(src, world.view))
 			C.images += H.hud_list[NATIONS_HUD]
+
+/mob/living/proc/handle_sanity()
+	return

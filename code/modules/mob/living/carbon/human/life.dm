@@ -17,6 +17,7 @@
 		handle_heartattack()
 		handle_drunk()
 		species.handle_life(src)
+		handle_sanity()
 
 		if(!client)
 			species.handle_npc(src)
@@ -1130,6 +1131,79 @@
 	adjustOxyLoss(5)
 	Paralyse(4)
 	adjustBruteLoss(2)
+
+/mob/living/carbon/human/handle_sanity()
+	if(!mind)
+		return
+	if(stat == DEAD)
+		return
+	mind.sanity_cycle++
+	//handle sanity updates if enough cycles have passed
+	if(mind.sanity_cycle >= SANITY_UPDATE_RATE)
+		if(stat == UNCONSCIOUS)
+			mind.adjustSanity(SANITY_SLEEP_RESTORE)
+			mind.sanity_cycle = 0
+			return	//we'll be skipping the insanity effects due to being unconscious anyways, so we'll just call it quits here
+		var/area/A = get_area(src)
+		if(A.iscalming)
+			mind.adjustSanity(SANITY_SAFE_SPACE_RESTORE)
+		if(mind.get_sanity_tolerance(SANITY_TYPE_FEAR) < 100))
+			for(var/datum/phobia/P in mind.phobias)
+				if(P.check_conditions(src))
+					mind.adjustSanity(P.sanity_value, SANITY_TYPE_FEAR)
+		if(mind.get_sanity_tolerance(SANITY_TYPE_DEATH) < 100)
+			var/bodies = 0
+			var/my_bodies = 0
+			for(var/mob/living/carbon/human/H in view(src))		//only human bodies affect us. animals and xenomorphs won't drive us mad
+				if(H.stat != DEAD)
+					continue
+				if(H.dna.real_name = dna.real_name)
+					if(!DISFIGURED in H.status_flags)
+						if(!HUSK in H.mutations)
+							if(!SKELETON in H.mutations)
+								my_bodies++
+								continue
+				bodies++
+			mind.adjustSanity(my_bodies * SANITY_CLONE_LOSS)	//no tolerance for finding out you are a clone
+			mind.adjustSanity((bodies * SANITY_DEATH_LOSS), SANITY_TYPE_DEATH)
+		if(!iscultist(src) && (mind.get_sanity_tolerance(SANITY_TYPE_CULT) < 100))
+			var/things = 0
+			var/list/cult_things = list(/obj/effect/rune,
+										/obj/structure/cult/functional,
+										/obj/structure/girders/cult,
+										/obj/machinery/door/airlock/cult,
+										/turf/simulated/wall/cult,
+										/turf/simulated/floor/engine/cult)
+			//You'll notice that Nar'Sie isn't listed above, and that's because Nar'Sie-induced insanity is handled by Nar'Sie
+			for(var/atom/A in view(src))
+				if(is_type_in_list(A, cult_things))
+					things++
+				if(isliving(A))
+					var/mob/living/L = A
+					if(ishuman(L))
+						continue	//to avoid insanity-based metagaming, you won't go insane from being near a secret cultist
+					if("cult" in L.faction)
+						things++
+			mind.adjustSanity((things * SANITY_CULT_LOSS), SANITY_TYPE_CULT)
+	//handle insanity effects
+	if(stat == UNCONSCIOUS)		//a brief respite from our suffering
+		return
+	var/eff_sanity = mind.getEffSanity()
+	switch(eff_sanity)
+		if(0.0)		//only possible if we are actually at 0.0 sanity from sanity damage (cannot be reached via sanity_mod)
+			to_chat(user, "<span class='userdanger'>Your mind can't cope! You black out!</span>")
+			KnockOut()	//mama said knock you out
+			return
+		if(0.1 to 10.0)
+			var/prob_mod = 100 - (eff_sanity * 10)			// 0 - 10% increase to probability (lower sanity, higher chance)
+			if(prob((prob_mod * 5) + 25))				//25 - 75%
+				major_insanity()
+			else if(prob((prob_mod * 3) + 50))			//50 - 80%
+				moderate_insanity()
+			else if(prob(prob_mod + 80))				//80 - 90%
+				minor_insanity()
+		if(10.1 to 25.0)
+			//to do
 
 
 

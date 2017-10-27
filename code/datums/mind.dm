@@ -80,6 +80,43 @@
 	//zealot_master is a reference to the mob that converted them into a zealot (for ease of investigation and such)
 	var/mob/living/carbon/human/zealot_master = null
 
+	//sanity vars
+	var/sanity = 100.0		//100.0 absolute clarity, 0.0 is absolute madness
+	var/sanity_mod = 0.0	//offsets sanity when calculating sanity effects (without actually changing actual sanity, for temporary changes)
+	var/sanity_cycle = 0	//number of cycles since we last updated sanity
+	var/list/phobias = list()		//what are we afraid of? this handy list will let us know!
+	//essentially mind armor, these are percent reduction for their type
+	var/list/sanity_tolerances = list(SANITY_TYPE_FEAR = 0, SANITY_TYPE_DEATH = 0, SANITY_TYPE_DRUGS = 0, SANITY_TYPE_CULT = 0, SANITY_TYPE_UNKNOWN = 0)
+
+/datum/mind/proc/adjustSanity(amount = 0, tolerance = null)
+	if(!amount)
+		return
+	if(amount < 0)	//tolerances will only apply to sanity loss
+		var/resistance = get_sanity_tolerance(tolerance)
+		if(resistance)
+			var/multiplier = (100 - resistance) / 100
+			if(multiplier <= 0)
+				return
+			amount *= multiplier
+	sanity = min(max((sanity + amount), 0.0), 100.0)
+
+/datum/mind/proc/setSanity(amount)
+	sanity = min(max(amount, 0.0), 100.0)
+
+/datum/mind/proc/getSanity()
+	return sanity
+
+/datum/mind/proc/getEffSanity()
+	if(sanity > 0.1)	//sanity_mod cannot force us to 0.0 sanity
+		return max((sanity + sanity_mod), 0.1)
+	return sanity
+
+/datum/mind/proc/get_sanity_tolerance(tolerance)
+	var/amount = 0
+	if(tolerance && tolerance in sanity_tolerances)
+		amount = sanity_tolerances[tolerance]
+	return amount
+
 /datum/mind/proc/transfer_to(mob/living/new_character)
 	var/datum/atom_hud/antag/hud_to_transfer = antag_hud //we need this because leave_hud() will clear this list
 	if(!istype(new_character))
