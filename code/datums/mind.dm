@@ -107,6 +107,7 @@
 	return sanity
 
 /datum/mind/proc/getEffSanity()
+	calculate_sanity_mod()
 	if(sanity > 0.1)	//sanity_mod cannot force us to 0.0 sanity
 		return max((sanity + sanity_mod), 0.1)
 	return sanity
@@ -116,6 +117,18 @@
 	if(tolerance && tolerance in sanity_tolerances)
 		amount = sanity_tolerances[tolerance]
 	return amount
+
+/datum/mind/proc/calculate_sanity_mod()
+	if(!current || !ishuman(current))
+		sanity_mod = 0
+		return
+	if(!current.reagents || !current.reagents.reagent_list || !current.reagents.reagent_list.len)
+		sanity_mod = 0
+		return
+	var/temp = 0
+	for(var/datum/reagent/R in current.reagents.reagent_list)
+		temp += R.sanity_mod
+	sanity_mod = temp
 
 /datum/mind/proc/transfer_to(mob/living/new_character)
 	var/datum/atom_hud/antag/hud_to_transfer = antag_hud //we need this because leave_hud() will clear this list

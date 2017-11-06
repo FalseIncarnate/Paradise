@@ -9,6 +9,7 @@
 	var/dizzy_adj = 3
 	var/alcohol_perc = 1 //percentage of ethanol in a beverage 0.0 - 1.0
 	taste_message = "liquid fire"
+	sanity_mod = 15.0
 
 /datum/reagent/consumable/ethanol/on_mob_life(mob/living/M)
 	M.AdjustDrunk(alcohol_perc)
@@ -99,14 +100,20 @@
 	drink_name = "Glass of Absinthe"
 	drink_desc = "The green fairy is going to get you now!"
 	taste_message = "fucking pain"
+	sanity_mod = -5.0
 
 //copy paste from LSD... shoot me
 /datum/reagent/consumable/ethanol/absinthe/on_mob_life(mob/living/M)
 	M.AdjustHallucinate(5)
+	if(prob(5))
+		if(M.mind)
+			M.mind.adjustSanity(-0.5, SANITY_TYPE_DRUGS)
 	..()
 
 /datum/reagent/consumable/ethanol/absinthe/overdose_process(mob/living/M, severity)
 	M.adjustToxLoss(1)
+	if(M.mind)
+		M.mind.adjustSanity(-0.5, SANITY_TYPE_DRUGS)
 
 /datum/reagent/consumable/ethanol/rum
 	name = "Rum"

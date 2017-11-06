@@ -1144,20 +1144,23 @@
 			mind.adjustSanity(SANITY_SLEEP_RESTORE)
 			mind.sanity_cycle = 0
 			return	//we'll be skipping the insanity effects due to being unconscious anyways, so we'll just call it quits here
-		var/area/A = get_area(src)
-		if(A.iscalming)
+		//Safe/sane areas
+		var/area/this_area = get_area(src)
+		if(this_area.safe_space)
 			mind.adjustSanity(SANITY_SAFE_SPACE_RESTORE)
-		if(mind.get_sanity_tolerance(SANITY_TYPE_FEAR) < 100))
+		//FEAR
+		if(mind.get_sanity_tolerance(SANITY_TYPE_FEAR) < 100)
 			for(var/datum/phobia/P in mind.phobias)
 				if(P.check_conditions(src))
 					mind.adjustSanity(P.sanity_value, SANITY_TYPE_FEAR)
+		//DEAD BODIES
 		if(mind.get_sanity_tolerance(SANITY_TYPE_DEATH) < 100)
 			var/bodies = 0
 			var/my_bodies = 0
 			for(var/mob/living/carbon/human/H in view(src))		//only human bodies affect us. animals and xenomorphs won't drive us mad
 				if(H.stat != DEAD)
 					continue
-				if(H.dna.real_name = dna.real_name)
+				if(H.dna.real_name == dna.real_name)
 					if(!DISFIGURED in H.status_flags)
 						if(!HUSK in H.mutations)
 							if(!SKELETON in H.mutations)
@@ -1166,11 +1169,12 @@
 				bodies++
 			mind.adjustSanity(my_bodies * SANITY_CLONE_LOSS)	//no tolerance for finding out you are a clone
 			mind.adjustSanity((bodies * SANITY_DEATH_LOSS), SANITY_TYPE_DEATH)
+		//CULT MAGICS
 		if(!iscultist(src) && (mind.get_sanity_tolerance(SANITY_TYPE_CULT) < 100))
 			var/things = 0
 			var/list/cult_things = list(/obj/effect/rune,
 										/obj/structure/cult/functional,
-										/obj/structure/girders/cult,
+										/obj/structure/girder/cult,
 										/obj/machinery/door/airlock/cult,
 										/turf/simulated/wall/cult,
 										/turf/simulated/floor/engine/cult)
@@ -1188,23 +1192,140 @@
 	//handle insanity effects
 	if(stat == UNCONSCIOUS)		//a brief respite from our suffering
 		return
+	if(mind.getSanity() == 0.0)		//only possible if we are actually at 0.0 sanity from sanity damage (cannot be reached via sanity_mod)
+		//catatonic shock
+		to_chat(src, "<span class='userdanger'>Your mind can't cope! You black out!</span>")
+		KnockOut()	//mama said knock you out
+		return
 	var/eff_sanity = mind.getEffSanity()
+	var/chance = rand(0, 100)
 	switch(eff_sanity)
-		if(0.0)		//only possible if we are actually at 0.0 sanity from sanity damage (cannot be reached via sanity_mod)
-			to_chat(user, "<span class='userdanger'>Your mind can't cope! You black out!</span>")
-			KnockOut()	//mama said knock you out
-			return
 		if(0.1 to 10.0)
-			var/prob_mod = 100 - (eff_sanity * 10)			// 0 - 10% increase to probability (lower sanity, higher chance)
-			if(prob((prob_mod * 5) + 25))				//25 - 75%
+			if(chance < 60)			//major, 60%
 				major_insanity()
-			else if(prob((prob_mod * 3) + 50))			//50 - 80%
+			else if(chance < 85)	//moderate, 25%
 				moderate_insanity()
-			else if(prob(prob_mod + 80))				//80 - 90%
+			else if(chance < 95)	//minor, 10%
 				minor_insanity()
+			else					//none, 5%
+				return
 		if(10.1 to 25.0)
-			//to do
+			if(chance < 10)			//major, 10%
+				major_insanity()
+			else if(chance < 60)	//moderate, 50%
+				moderate_insanity()
+			else if(chance < 90)	//minor, 30%
+				minor_insanity()
+			else					//none, 10%
+				return
+		if(25.1 to 50.0)
+			if(chance < 40)			//moderate, 40%
+				moderate_insanity()
+			else if(chance < 80)	//minor, 40%
+				minor_insanity()
+			else					//none, 20%
+				return
+		if(50.1 to 75.0)
+			if(chance < 5)			//moderate, 5%
+				moderate_insanity()
+			else if(chance < 55)	//minor, 50%
+				minor_insanity()
+			else					//none, 45%
+				return
+		if(75.1 to 100.0)
+			return
 
+/mob/living/carbon/human/proc/major_insanity()
+	//self-harm, self-stripping, intent changes, phobia development, visual hallucinations
+	var/action = rand(1, 5)
+	switch(action)
+		if(1)	//self-harm
+			if(restrained())
+				visible_message("<span class='warning'>[src] jerks about suddenly!</span>")
+				return
+			var/last_intent = a_intent
+			a_intent = INTENT_HARM
+			var/obj/O = get_active_hand()
+			if(!O)
+				UnarmedAttack(src)
+			else
+				attackby(O, src)
+			a_intent = last_intent
+			return
+		if(2)	//self-stripping
+			if(restrained())
+				return
+			var/list/items = get_equipped_items()
+			if(!items || !items.len)
+				return
+			var/obj/item/I = pick(items)
+			unEquip(I)
+			return
+		if(3)	//intent change
+			a_intent_change(pick(INTENT_HELP, INTENT_DISARM, INTENT_GRAB, INTENT_HARM))		//silently change their intent without telling them directly (HUD will update)
+			return
+		if(4)	//phobia development
+			var/datum/phobia/P = pick(subtypesof(/datum/phobia))
+			var/existing = 0
+			for(var/datum/phobia/fear in mind.phobias)
+				if(istype(P, fear))
+					existing = 1
+					if(fear.severity > 1)			//severity 1 cannot worsen, its the lowest you can go
+						fear.change_severity(-1)	//get worse
+					break
+			if(!existing)							//didn't have this one yet, add it!
+				mind.phobias += new P
+			return
+		if(5)	//visual hallucinations
+			var/hal = pick("delusion", "self_delusion", "xeno", "borer", "singulo", "dangerflash", "husks", "koolaid", "flood", "fake")
+			hallucinate(hal)
+			return
+
+/mob/living/carbon/human/proc/moderate_insanity()
+	//random emote, auditory hallucinations, gibberish
+	var/action = pick(1, 2, 3)
+	switch(action)
+		if(1)	//random emote
+			var/act = pick("aflap", "airguitar", "choke", "collapse", "cry", "deathgasp", "gasp", "giggle", "laugh", "mumble", "quiver", "salute", "scream", "shiver" , "state", "twitch", "winks")
+			emote(act)
+			return
+		if(2)	//auditory hallucination
+			var/hal = pick("whispers", "message", "sounds")
+			hallucinate(hal)
+			return
+		if(3)	//gibberish
+			var/gibberish = pick("EI NATH!", "Bee boo, ber, har hee oo, gah ole!", "STI KALY!", "H'drak v'loso, mir'kanas verbot!",
+								"TOK-LYR RQA-NAP G'OLT-ULOFT!!", "HERNK HERNK HERNK CLU WNE!", "ICKY OOCKY ICK OOK!",
+								"THEYKILLUSATCENTCOMM!", "ICANSEEBYONDTHEFOURTHWALL!", "HadnochoicehadnochoicemerrrghjustGO!",
+								"bddpourl,skameli!", "noitpecrep si ytilaeR", "False is true and true is undefined!")
+			forcesay(gibberish)
+			return
+
+/mob/living/carbon/human/proc/minor_insanity()
+	//whisper to self, twitching, anxiety
+	var/action = pick(1, 2, 3)
+	switch(action)
+		if(1)	//whisper to self
+			var/message = pick("It's okay...", "It's not real...", "I'm okay...", "Just ignore it...", "Happy thoughts...", "It'll be over soon...")
+			whisper(message)
+			return
+		if(2)	//twitching
+			emote("twitch_s")
+			return
+		if(3)	//anxiety
+			var/message
+			if(prob(5))
+				var/list/in_view = list()
+				for(var/mob/living/L in view())
+					in_view += L
+				var/T = "Something"
+				if(in_view.len)
+					T = pick(in_view)
+				message = "[T] is watching you closely..."
+			else
+				message = pick("You feel anxious.", "You feel on edge.", "You feel strange.", "You feel uncomfortable.", "You feel like almost panicking.", "Something feels off.")
+			to_chat(src, "<span class='warning'>[message]</span>")
+			return
 
 
 // Need this in species.

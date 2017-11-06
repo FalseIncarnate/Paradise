@@ -17,6 +17,8 @@
 	// separate APCs, and so on)
 	var/there_can_be_many = 0
 
+	var/safe_space = FALSE
+
 
 /area/New()
 

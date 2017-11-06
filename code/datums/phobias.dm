@@ -4,13 +4,20 @@
 	var/sci_name = "phobia"	//scientific name for the fear (or a close approximation if fake)
 	var/desc = "The only thing we have to fear..."
 	var/sanity_value = 0.0	//set to a negative number, this is how much we change their sanity
-	var/severity = "Minor"	//Severity scale: Minor, Moderate, Severe
+	var/severity = 3	//Severity scale: Minor = 3, Moderate = 2, Severe = 1
 
 /datum/phobia/proc/check_conditions(mob/my_body)
 	//override this proc with the actual condition checking code
 	//all severities should be able to use the same checks, or else the fear isn’t well defined
 	return FALSE
 
+/datum/phobia/proc/change_severity(change)	//this is a bit confusing, but a high number is less severe, so a positive change is the phobia being overcome
+	if(!change)
+		return
+	if(change == 1 && severity < 3)
+		severity++
+	else if(change == -1 && severity > 1)
+		severity--
 
 /datum/phobia/darkness
 	name = "darkness"
@@ -19,15 +26,18 @@
 	sanity_value = -1.0
 	var/fear_level = 1	//how dark must it be to scare us?
 
-/datum/phobia/darkness/moderate
-	severity = "Moderate"
-	sanity_value = -3.0
-	fear_level = 3
-
-/datum/phobia/darkness/severe
-	severity = "Severe"
-	sanity_value = -5.0
-	fear_level = 5
+/datum/phobia/darkness/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -5.0
+			fear_level = 5
+		if(2)
+			sanity_value = -3.0
+			fear_level = 3
+		if(3)
+			sanity_value = -1.0
+			fear_level = 1
 
 /datum/phobia/darkness/check_conditions(mob/my_body)
 	if(!my_body)
@@ -47,15 +57,18 @@
 	sanity_value = -0.5
 	var/percent = 75		//percentage of tiles that must be or contain dense objects to scare us
 
-/datum/phobia/small_spaces/moderate
-	severity = "Moderate"
-	sanity_value = -1.0
-	percent = 50
-
-/datum/phobia/small_spaces/severe
-	severity = "Severe"
-	sanity_value = -1.5
-	percent = 25
+/datum/phobia/small_spaces/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -1.5
+			percent = 25
+		if(2)
+			sanity_value = -1.0
+			percent = 50
+		if(3)
+			sanity_value = -0.5
+			percent = 75
 
 /datum/phobia/small_spaces/check_conditions(mob/my_body)
 	if(!my_body)
@@ -84,15 +97,18 @@
 	sanity_value = -0.5
 	var/crowd_size = 10	//how many people (other than us) before the crowd is too big for us?
 
-/datum/phobia/crowds/moderate
-	severity = "Moderate"
-	sanity_value = -1.0
-	crowd_size = 5
-
-/datum/phobia/crowds/severe
-	severity = "Severe"
-	sanity_value = -1.5
-	crowd_size = 3
+/datum/phobia/crowds/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -1.5
+			crowd_size = 3
+		if(2)
+			sanity_value = -1.0
+			crowd_size = 5
+		if(3)
+			sanity_value = -0.5
+			crowd_size = 10
 
 /datum/phobia/crowds/check_conditions(mob/my_body)
 	if(!my_body)
@@ -116,15 +132,18 @@
 	sanity_value = -1.0
 	var/danger_zone = 3	//how close can we get to a spider before we freak out?
 
-/datum/phobia/spiders/moderate
-	severity = "Moderate"
-	sanity_value = -2.5
-	danger_zone = 5
-
-/datum/phobia/spiders/severe
-	severity = "Severe"
-	sanity_value = -5.0
-	danger_zone = 99	//we only check in sight range, so this is overkill but whatever. mostly safeguarding against future changes to view_range
+/datum/phobia/spiders/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -5.0
+			danger_zone = 99 //we only check in sight range, so this is overkill but whatever. mostly safeguarding against future changes to view_range
+		if(2)
+			sanity_value = -2.5
+			danger_zone = 5
+		if(3)
+			sanity_value = -1.0
+			danger_zone = 3
 
 /datum/phobia/spiders/check_conditions(mob/my_body)
 	if(!my_body)
@@ -160,15 +179,18 @@
 	sanity_value = -0.1
 	var/unacceptable = 5	//how much xeno scum can we tolerate before it is too much to handle
 
-/datum/phobia/alien_races/moderate
-	severity = "Moderate"
-	sanity_value = -1.0
-	unacceptable = 3
-
-/datum/phobia/alien_races/severe
-	severity = "Severe"
-	sanity_value = -1.5
-	unacceptable = 1
+/datum/phobia/alien_races/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -1.5
+			unacceptable = 1
+		if(2)
+			sanity_value = -1.0
+			unacceptable = 3
+		if(3)
+			sanity_value = -0.1
+			unacceptable = 5
 
 /datum/phobia/alien_races/check_conditions(mob/my_body)
 	if(!my_body)
@@ -198,15 +220,18 @@
 	sanity_value = -0.1
 	var/percent = 25	//percentage of dense tiles needed to keep us calm
 
-/datum/phobia/large_spaces/moderate
-	severity = "Moderate"
-	sanity_value = -0.5
-	percent = 50
-
-/datum/phobia/large_spaces/severe
-	severity = "Severe"
-	sanity_value = -1.0
-	percent = 75
+/datum/phobia/large_spaces/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -1.0
+			percent = 75
+		if(2)
+			sanity_value = -0.5
+			percent = 50
+		if(3)
+			sanity_value = -0.1
+			percent = 25
 
 /datum/phobia/large_spaces/check_conditions(mob/my_body)
 	if(!my_body)
@@ -235,15 +260,18 @@
 	sanity_value = -0.1
 	var/crowd_size = 0		//number of people needed nearby to keep us from feeling alone
 
-/datum/phobia/solitude/moderate
-	severity = "Moderate"
-	sanity_value = -0.5
-	crowd_size = 3
-
-/datum/phobia/solitude/severe
-	severity = "Severe"
-	sanity_value = -1.0
-	crowd_size = 5
+/datum/phobia/solitude/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -1.0
+			crowd_size = 5
+		if(2)
+			sanity_value = -0.5
+			crowd_size = 3
+		if(3)
+			sanity_value = -0.1
+			crowd_size = 0
 
 /datum/phobia/solitude/check_conditions(mob/my_body)
 	if(!my_body)
@@ -267,15 +295,18 @@
 	sanity_value = -0.1
 	var/unacceptable = 10		//how much blood we can tolerate before it overwhelms us in fear
 
-/datum/phobia/blood/moderate
-	severity = "Moderate"
-	sanity_value = -0.5
-	unacceptable = 5
-
-/datum/phobia/blood/severe
-	severity = "Severe"
-	sanity_value = -1.0
-	unacceptable = 1
+/datum/phobia/blood/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -1.0
+			unacceptable = 1
+		if(2)
+			sanity_value = -0.5
+			unacceptable = 5
+		if(3)
+			sanity_value = -0.1
+			unacceptable = 10
 
 /datum/phobia/blood/check_conditions(mob/my_body)
 	if(!my_body)
@@ -303,15 +334,18 @@
 	sanity_value = -0.5
 	var/unacceptable = 5	//how much advanced tech we can tolerate before it overwhelms us
 
-/datum/phobia/technology/moderate
-	severity = "Moderate"
-	sanity_value = -1.0
-	unacceptable = 3
-
-/datum/phobia/technology/severe
-	severity = "Severe"
-	sanity_value = -1.5
-	unacceptable = 1
+/datum/phobia/technology/change_severity(change)
+	..(change)
+	switch(severity)
+		if(1)
+			sanity_value = -1.5
+			unacceptable = 1
+		if(2)
+			sanity_value = -1.0
+			unacceptable = 3
+		if(3)
+			sanity_value = -0.5
+			unacceptable = 5
 
 /datum/phobia/technology/check_conditions(mob/my_body)
 	if(!my_body)

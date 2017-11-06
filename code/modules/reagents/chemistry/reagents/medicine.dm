@@ -845,6 +845,8 @@
 		M.emote("drool")
 	if(prob(20))
 		M.adjustBrainLoss(1)
+	if(M.mind)
+		M.mind.adjustSanity(1.0)
 	..()
 
 /datum/reagent/medicine/ether
@@ -969,6 +971,8 @@
 
 /datum/reagent/medicine/liquid_solder/on_mob_life(mob/living/M)
 	M.adjustBrainLoss(-3)
+	if(M.mind)
+		M.mind.adjustSanity(0.5)
 	..()
 
 

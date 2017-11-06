@@ -17,6 +17,12 @@
 	color = "#cc0044"
 	taste_message = "paradise"
 
+/datum/reagent/consumable/drink/paradise_punch/on_mob_life(mob/living/M)
+	if(prob(25))
+		if(M.mind)
+			M.mind.adjustSanity(0.1)
+	..()
+
 //Apple-pocalypse: Low chance to cause a goonchem vortex that pulls things within a very small radius (2 tiles?) towards the drinker
 /datum/reagent/consumable/drink/apple_pocalypse
 	name = "Apple-pocalypse"

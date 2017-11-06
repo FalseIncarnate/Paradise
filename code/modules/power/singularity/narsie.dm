@@ -76,8 +76,9 @@
 	for(var/mob/living/carbon/M in oviewers(8, src))
 		if(M.stat == CONSCIOUS)
 			if(!iscultist(M))
-				to_chat(M, "<span class='warning'>You feel your sanity crumble away in an instant as you gaze upon [src.name]...</span>")
+				to_chat(M, "<span class='warning'>You feel your sanity crumble away in an instant as you gaze upon [name]...</span>")
 				M.apply_effect(3, STUN)
+				M.mind.adjustSanity(75, SANITY_TYPE_CULT)	//we weren't kidding about the sanity damage
 
 
 /obj/singularity/narsie/consume(var/atom/A)

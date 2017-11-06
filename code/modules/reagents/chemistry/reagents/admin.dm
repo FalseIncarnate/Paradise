@@ -51,6 +51,8 @@
 		if(D.severity == NONTHREAT)
 			continue
 		D.cure(0)
+	if(M.mind)
+		M.mind.adjustSanity(10)
 	..()
 
 /datum/reagent/medicine/adminordrazine/nanites

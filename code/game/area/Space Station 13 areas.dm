@@ -1135,6 +1135,7 @@ var/list/ghostteleportlocs = list()
 /area/crew_quarters
 	name = "\improper Dormitories"
 	icon_state = "Sleep"
+	safe_space = TRUE
 
 /area/crew_quarters/toilet
 	name = "\improper Dormitory Toilets"
@@ -1500,6 +1501,7 @@ var/list/ghostteleportlocs = list()
 	name = "\improper Psych Room"
 	icon_state = "medbay3"
 	music = 'sound/ambience/signal.ogg'
+	safe_space = TRUE
 
 /area/medical/medbreak
 	name = "\improper Break Room"
@@ -2492,6 +2494,7 @@ area/security/podbay
 	dynamic_lighting = 0
 	requires_power = 0
 	ambientsounds = list('sound/ambience/shore.ogg', 'sound/ambience/seag1.ogg','sound/ambience/seag2.ogg','sound/ambience/seag2.ogg')
+	safe_space = TRUE
 
 /area/awaymission/undersea
 	name = "Undersea"

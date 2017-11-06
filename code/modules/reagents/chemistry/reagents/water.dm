@@ -418,6 +418,8 @@
 		M.adjustFireLoss(-2)
 		M.adjustOxyLoss(-2)
 		M.adjustBruteLoss(-2)
+		if(M.mind)
+			M.mind.adjustSanity(1.0)
 	else
 		M.adjustBrainLoss(3)
 		M.adjustToxLoss(1)
@@ -425,6 +427,8 @@
 		M.adjustOxyLoss(2)
 		M.adjustBruteLoss(2)
 		M.AdjustCultSlur(10)//CUASE WHY THE HELL NOT
+		if(M.mind)
+			M.mind.adjustSanity(-1.0, SANITY_TYPE_CULT)
 	..()
 
 /datum/reagent/hellwater

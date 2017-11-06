@@ -37,6 +37,9 @@
 /datum/reagent/lsd/on_mob_life(mob/living/M)
 	M.Druggy(15)
 	M.AdjustHallucinate(10)
+	if(prob(25))
+		if(M.mind)
+			M.mind.adjustSanity(-0.2, SANITY_TYPE_DRUGS)
 	..()
 
 /datum/reagent/space_drugs
@@ -55,6 +58,9 @@
 		if(M.canmove && !M.restrained())
 			step(M, pick(cardinal))
 	if(prob(7)) M.emote(pick("twitch","drool","moan","giggle"))
+	if(prob(15))
+		if(M.mind)
+			M.mind.adjustSanity(-0.1, SANITY_TYPE_DRUGS)
 	..()
 
 /datum/reagent/psilocybin
@@ -62,6 +68,7 @@
 	id = "psilocybin"
 	description = "A strong psycotropic derived from certain species of mushroom."
 	color = "#E700E7" // rgb: 231, 0, 231
+	sanity_mod = -10.0
 
 /datum/reagent/psilocybin/on_mob_life(mob/living/M)
 	M.Druggy(30)
@@ -221,7 +228,7 @@
 	color = "#0264B4"
 	overdose_threshold = 20
 	addiction_chance = 50
-
+	sanity_mod = 10
 
 /datum/reagent/krokodil/on_mob_life(mob/living/M)
 	M.AdjustJitter(-40)
@@ -345,6 +352,7 @@
 	overdose_threshold = 20
 	addiction_chance = 80
 	metabolization_rate = 0.6
+	sanity_mod = -25.0
 
 /datum/reagent/bath_salts/on_mob_life(mob/living/M)
 	var/check = rand(0,100)
@@ -376,6 +384,9 @@
 		to_chat(M, "<span class='userdanger'>They're coming for you!</span>")
 	else if(check < 28)
 		to_chat(M, "<span class='userdanger'>THEY'RE GONNA GET YOU!</span>")
+	if(prob(33))
+		if(M.mind)
+			M.mind.adjustSanity(-0.5, SANITY_TYPE_DRUGS)
 	..()
 
 /datum/reagent/bath_salts/reaction_mob(mob/living/M, method=TOUCH, volume)
@@ -477,6 +488,7 @@
 	description = "A mild psychoactive chemical extracted from the cannabis plant."
 	reagent_state = LIQUID
 	color = "#0FBE0F"
+	sanity_mod = 5
 
 /datum/reagent/thc/on_mob_life(mob/living/M)
 	M.stuttering += rand(0,2)
@@ -626,6 +638,7 @@
 	overdose_threshold = 20
 	addiction_chance = 50
 	taste_message = "silicone"
+	sanity_mod = 10
 
 
 /datum/reagent/surge/on_mob_life(mob/living/M)
