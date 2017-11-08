@@ -15,3 +15,9 @@
 	faction = list("creature")
 	gold_core_spawnable = CHEM_MOB_SPAWN_HOSTILE
 
+/mob/living/simple_animal/hostile/creature/AttackingTarget()
+	..()
+	if(ishuman(target))
+		var/mob/living/carbon/human/H = target
+		if(H.mind)
+			H.mind.adjustSanity(-0.2, SANITY_TYPE_UNKNOWN)

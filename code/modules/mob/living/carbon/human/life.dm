@@ -1140,9 +1140,9 @@
 	mind.sanity_cycle++
 	//handle sanity updates if enough cycles have passed
 	if(mind.sanity_cycle >= SANITY_UPDATE_RATE)
+		mind.sanity_cycle = 0
 		if(stat == UNCONSCIOUS)
 			mind.adjustSanity(SANITY_SLEEP_RESTORE)
-			mind.sanity_cycle = 0
 			return	//we'll be skipping the insanity effects due to being unconscious anyways, so we'll just call it quits here
 		//Safe/sane areas
 		var/area/this_area = get_area(src)
@@ -1286,7 +1286,7 @@
 	var/action = pick(1, 2, 3)
 	switch(action)
 		if(1)	//random emote
-			var/act = pick("aflap", "airguitar", "choke", "collapse", "cry", "deathgasp", "gasp", "giggle", "laugh", "mumble", "quiver", "salute", "scream", "shiver" , "state", "twitch", "winks")
+			var/act = pick("aflap", "airguitar", "choke", "collapse", "cry", "deathgasp", "gasp", "giggle", "laugh", "mumble", "quiver", "salute", "scream", "shiver" , "stare", "twitch", "winks")
 			emote(act)
 			return
 		if(2)	//auditory hallucination

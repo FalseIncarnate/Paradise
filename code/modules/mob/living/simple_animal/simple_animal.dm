@@ -79,6 +79,7 @@
 	var/del_on_death = 0 //causes mob to be deleted on death, useful for mobs that spawn lootable corpses
 	var/deathmessage = ""
 	var/death_sound = null //The sound played on death
+	var/theraputic = FALSE
 
 
 /mob/living/simple_animal/New()
@@ -308,6 +309,9 @@
 			if(health > 0)
 				visible_message("<span class='notice'> [M] [response_help] [src].</span>")
 				playsound(loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
+				if(theraputic && prob(10))
+					if(M.mind && M.mind.getSanity() >= SANITY_COMFORT_THRESHOLD)
+						M.mind.adjustSanity(SANITY_COMFORT_RESTORE)
 
 		if(INTENT_GRAB)
 			if(M == src || anchored)

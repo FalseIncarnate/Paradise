@@ -18,6 +18,7 @@
 	response_harm   = "kicks"
 	see_in_dark = 5
 	gold_core_spawnable = CHEM_MOB_SPAWN_FRIENDLY
+	theraputic = TRUE
 
 /mob/living/simple_animal/pet/pug/process_ai()
 	..()
