@@ -63,6 +63,9 @@
 	var/required_objectives=list() // Objectives that are ALWAYS added.
 	var/optional_objectives=list() // Objectives that are SOMETIMES added.
 
+	//Job-based Sanity Tolerances, from job training / experience, only gained when you begin as this role. KEEP THESE VALUES REASONABLE
+	var/list/job_sanity_tolerances = list(SANITY_TYPE_FEAR = 0, SANITY_TYPE_DEATH = 0, SANITY_TYPE_DRUGS = 0, SANITY_TYPE_CULT = 0, SANITY_TYPE_UNKNOWN = 0)
+
 //Only override this proc
 /datum/job/proc/after_spawn(mob/living/carbon/human/H)
 
@@ -112,6 +115,9 @@
 
 /datum/job/proc/is_position_available()
 	return (current_positions < total_positions) || (total_positions == -1)
+
+/datum/job/proc/get_job_sanity_tolerances()
+	return job_sanity_tolerances
 
 /datum/outfit/job
 	name = "Standard Gear"

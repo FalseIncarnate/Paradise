@@ -169,6 +169,7 @@
 	minimal_access = list(access_mining, access_mint, access_mining_station, access_mailsorting, access_maint_tunnels, access_mineral_storeroom)
 	alt_titles = list("Spelunker")
 	outfit = /datum/outfit/job/mining
+	job_sanity_tolerances = list(SANITY_TYPE_FEAR = 10)
 
 /datum/outfit/job/mining
 	name = "Shaft Miner"

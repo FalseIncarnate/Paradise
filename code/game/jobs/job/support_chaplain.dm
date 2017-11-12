@@ -13,6 +13,7 @@
 	minimal_access = list(access_morgue, access_chapel_office, access_crematorium, access_maint_tunnels)
 
 	outfit = /datum/outfit/job/chaplain
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 5, SANITY_TYPE_CULT = 10)
 
 /datum/outfit/job/chaplain
 	name = "Chaplain"

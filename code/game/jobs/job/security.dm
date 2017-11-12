@@ -21,6 +21,7 @@
 	exp_requirements = 600
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/hos
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 10, SANITY_TYPE_CULT = 5)
 
 /datum/outfit/job/hos
 	name = "Head of Security"
@@ -65,6 +66,7 @@
 	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/warden
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 10, SANITY_TYPE_CULT = 5)
 
 /datum/outfit/job/warden
 	name = "Warden"
@@ -111,6 +113,7 @@
 	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/detective
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 10, SANITY_TYPE_CULT = 5)
 
 /datum/outfit/job/detective
 	name = "Detective"
@@ -168,6 +171,7 @@
 	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/officer
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 10, SANITY_TYPE_CULT = 5)
 
 /datum/outfit/job/officer
 	name = "Security Officer"
@@ -208,6 +212,7 @@
 	access = list(access_medical, access_morgue, access_surgery, access_chemistry, access_virology, access_genetics)
 	minimal_access = list(access_medical, access_morgue, access_surgery, access_security, access_sec_doors, access_brig, access_court, access_maint_tunnels)
 	outfit = /datum/outfit/job/brigdoc
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 10)
 
 /datum/outfit/job/brigdoc
 	name = "Brig Physician"
@@ -245,6 +250,7 @@
 	minimal_access = list(access_security, access_sec_doors, access_brig, access_court, access_maint_tunnels, access_weapons, access_pilot, access_external_airlocks)
 	minimal_player_age = 7
 	outfit = /datum/outfit/job/pilot
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 5)
 
 /datum/outfit/job/pilot
 	name = "Security Pod Pilot"

@@ -16,6 +16,7 @@ var/datum/announcement/minor/captain_announcement = new(do_newscast = 0)
 	exp_requirements = 1200
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/captain
+	job_sanity_tolerances = list(SANITY_TYPE_FEAR = 10, SANITY_TYPE_DEATH = 10, SANITY_TYPE_DRUGS = 5, SANITY_TYPE_CULT = 5)
 
 /datum/job/captain/get_access()
 	return get_all_accesses()
@@ -174,6 +175,7 @@ var/datum/announcement/minor/captain_announcement = new(do_newscast = 0)
 			            access_RC_announce, access_keycard_auth, access_heads, access_blueshield, access_weapons)
 
 	outfit = /datum/outfit/job/blueshield
+	job_sanity_tolerances = list(SANITY_TYPE_FEAR = 10, SANITY_TYPE_DEATH = 10, SANITY_TYPE_DRUGS = 5, SANITY_TYPE_CULT = 5)
 
 /datum/outfit/job/blueshield
 	name = "Blueshield"

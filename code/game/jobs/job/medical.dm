@@ -19,6 +19,7 @@
 	exp_requirements = 600
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/cmo
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 15, SANITY_TYPE_DRUGS = 5)
 
 /datum/outfit/job/cmo
 	name = "Chief Medical Officer"
@@ -57,6 +58,7 @@
 	exp_requirements = 180
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/doctor
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 10, SANITY_TYPE_DRUGS = 5)
 
 /datum/outfit/job/doctor
 	name = "Medical Doctor"
@@ -91,6 +93,7 @@
 	exp_requirements = 180
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/coroner
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 20)
 
 /datum/outfit/job/coroner
 	name = "Coroner"
@@ -154,6 +157,7 @@
 	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/chemist
+	job_sanity_tolerances = list(SANITY_TYPE_DRUGS = 10)
 
 /datum/outfit/job/chemist
 	name = "Chemist"
@@ -187,6 +191,7 @@
 	exp_requirements = 180
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/geneticist
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 15)
 
 /datum/outfit/job/geneticist
 	name = "Geneticist"
@@ -254,6 +259,7 @@
 	minimal_access = list(access_medical, access_psychiatrist, access_maint_tunnels)
 	alt_titles = list("Psychologist","Therapist")
 	outfit = /datum/outfit/job/psychiatrist
+	job_sanity_tolerances = list(SANITY_TYPE_FEAR = 10, SANITY_TYPE_DRUGS = 5)
 
 /datum/outfit/job/psychiatrist
 	name = "Psychiatrist"
@@ -294,6 +300,7 @@
 	exp_requirements = 180
 	exp_type = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/paramedic
+	job_sanity_tolerances = list(SANITY_TYPE_DEATH = 5)
 
 /datum/outfit/job/paramedic
 	name = "Paramedic"

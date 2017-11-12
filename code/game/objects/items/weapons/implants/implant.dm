@@ -11,6 +11,7 @@
 	item_color = "b"
 	var/allow_multiple = 0
 	var/uses = -1
+	var/sanity_mod_bonus = 0
 
 
 /obj/item/weapon/implant/proc/trigger(emote, mob/source)

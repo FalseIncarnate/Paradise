@@ -1160,6 +1160,7 @@
 			for(var/mob/living/carbon/human/H in view(src))		//only human bodies affect us. animals and xenomorphs won't drive us mad
 				if(H.stat != DEAD)
 					continue
+				//the clone stuff doesn't appear to be working right now. figure that out or delete it, though it might just be my testing...
 				if(H.dna.real_name == dna.real_name)
 					if(!DISFIGURED in H.status_flags)
 						if(!HUSK in H.mutations)

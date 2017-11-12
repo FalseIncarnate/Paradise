@@ -3,6 +3,7 @@
 	desc = "Divide and Conquer"
 	origin_tech = "programming=5;biotech=5;syndicate=8"
 	activated = 0
+	sanity_mod_bonus = 10
 
 /obj/item/weapon/implant/traitor/get_data()
 	var/dat = {"<b>Implant Specifications:</b><BR>

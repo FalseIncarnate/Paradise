@@ -128,6 +128,9 @@
 	var/temp = 0
 	for(var/datum/reagent/R in current.reagents.reagent_list)
 		temp += R.sanity_mod
+	for(var/obj/item/weapon/implant/I in current)
+		if(I.implanted && I.imp_in == current)
+			temp += I.sanity_mod_bonus
 	sanity_mod = temp
 
 /datum/mind/proc/transfer_to(mob/living/new_character)

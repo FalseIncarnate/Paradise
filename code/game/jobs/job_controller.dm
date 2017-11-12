@@ -92,6 +92,15 @@ var/global/datum/controller/occupations/job_master
 				if(prob(50))
 					new objectiveType(player.mind)
 
+			//Natural sanity tolerances from job training/experience
+			var/list/tol_list = job.get_job_sanity_tolerances()
+			if(tol_list && tol_list.len)
+				for(var/tol_type in tol_list)	//now it doesn't matter what order the tolerances are listed on the job datum, or if they are omitted!
+					if(tol_type in player.mind.sanity_tolerances)
+						player.mind.sanity_tolerances[tol_type] = tol_list[tol_type]
+					else
+						Debug("Rank [rank] has a non-standard Sanity Tolerance \"[tol_type]\", yell at a coder!")
+
 			unassigned -= player
 			job.current_positions++
 			return 1

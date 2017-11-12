@@ -12,6 +12,7 @@
 	minimal_access = list()
 	admin_only = 1
 	outfit = /datum/outfit/job/ntnavyofficer
+	job_sanity_tolerances = list(SANITY_TYPE_FEAR = 50, SANITY_TYPE_DEATH = 50, SANITY_TYPE_DRUGS = 50, SANITY_TYPE_CULT = 50, SANITY_TYPE_UNKNOWN = 50)
 
 /datum/job/ntnavyofficer/get_access()
 	return get_centcom_access(title)
@@ -54,6 +55,7 @@
 	admin_only = 1
 	spawn_ert = 1
 	outfit = /datum/outfit/job/ntspecops
+	job_sanity_tolerances = list(SANITY_TYPE_FEAR = 100, SANITY_TYPE_DEATH = 100, SANITY_TYPE_DRUGS = 100, SANITY_TYPE_CULT = 100, SANITY_TYPE_UNKNOWN = 100)
 
 /datum/job/ntspecops/get_access()
 	return get_centcom_access(title)

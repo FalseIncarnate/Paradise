@@ -3,6 +3,7 @@
 	desc = "Stops people messing with your mind."
 	origin_tech = "materials=2;biotech=4;programming=4"
 	activated = 0
+	sanity_mod_bonus = 20
 
 /obj/item/weapon/implant/mindshield/get_data()
 	var/dat = {"<b>Implant Specifications:</b><BR>
