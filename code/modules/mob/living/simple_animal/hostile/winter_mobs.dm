@@ -20,6 +20,56 @@
 	melee_damage_lower = 3
 	melee_damage_upper = 7
 
+	gold_core_spawnable = CHEM_MOB_SPAWN_HOSTILE
+
+	var/ignore_dist = FALSE	//set to TRUE if this mob will counter cheese tactics at range even if not a ranged fighter
+
+/mob/living/simple_animal/hostile/winter/process_ai()
+	anti_cheese()
+	..()
+
+/mob/living/simple_animal/hostile/winter/proc/anti_cheese()
+	var/list/wrappables = list()
+	var/list/breakables = list()
+	if(ranged || ignore_dist)
+		for(var/obj/structure/S in view())
+			if(istype(S, /obj/structure/closet) && !istype(S, /obj/structure/closet/crate))
+				wrappables += S
+			if(istype(S, /obj/structure/stool/bed))
+				breakables += src
+	else
+		for(var/obj/structure/S in view(2))
+			if(istype(S, /obj/structure/closet) && !istype(S, /obj/structure/closet/crate))
+				wrappables += S
+			if(istype(S, /obj/structure/stool/bed))
+				breakables += src
+
+	for(var/obj/structure/closet/C in wrappables)
+		wrappables -= C
+		if(get_turf(C) == get_turf(src))
+			new C.material_drop(get_turf(C), C.material_drop_amount)
+			qdel(C)
+			continue
+		if(C.opened && !C.close())
+			continue
+		var/obj/structure/bigDelivery/P = new /obj/structure/bigDelivery(get_turf(C))
+		P.wrapped = C
+		C.forceMove(P)
+		P.init_welded = C.welded
+		C.welded = 1
+		P.giftwrapped = 1
+		P.icon_state = "giftcloset"
+
+	var/num_to_break = rand(1, breakables.len)
+	while(num_to_break)
+		var/obj/structure/S = pick(breakables)
+		breakables -= S
+		S.unbuckle_mob(TRUE)
+		if(istype(S, /obj/structure/stool/bed))
+			var/obj/structure/stool/bed/B = S
+			new B.buildstacktype(get_turf(B), B.buildstackamount)
+		qdel(S)
+
 /mob/living/simple_animal/hostile/winter/snowman
 	name = "snowman"
 	desc = "A very angry snowman. Doesn't look like it wants to play around..."
@@ -32,7 +82,6 @@
 	bodytemperature = 73.0		//it's made of snow and hatred, so it's pretty cold.
 	maxbodytemp = 280.15		//at roughly 7 C, these will start melting (dying) from the warmth. Mind over matter or something.
 	heat_damage_per_tick = 10	//Now With Rapid Thawing Action!
-	gold_core_spawnable = CHEM_MOB_SPAWN_HOSTILE
 
 
 /mob/living/simple_animal/hostile/winter/snowman/death(gibbed)
@@ -65,7 +114,6 @@
 	health = 80
 	melee_damage_lower = 5
 	melee_damage_upper = 10
-	gold_core_spawnable = CHEM_MOB_SPAWN_HOSTILE
 
 /mob/living/simple_animal/hostile/winter/santa
 	maxHealth = 150		//if this seems low for a "boss", it's because you have to fight him multiple times, with him fully healing between stages
@@ -78,6 +126,13 @@
 	icon_living = "santa"
 	icon_dead = "santa-dead"
 
+	gold_core_spawnable = CHEM_MOB_SPAWN_INVALID
+	sentience_type = SENTIENCE_BOSS
+
+	ignore_dist = TRUE	//naughty cheese tactics cannot escape his list!
+	var/base_chance = 10
+	var/list/special_moves = list("self_heal")
+
 /mob/living/simple_animal/hostile/winter/santa/death(gibbed)
 	..()
 	if(death_message)
@@ -87,9 +142,35 @@
 			new next_stage(get_turf(src))
 			qdel(src)	//hide the body
 
+/mob/living/simple_animal/hostile/winter/santa/process_ai()
+	var/prob_chance = base_chance
+	if(health <= maxHealth * 0.75)
+		prob_chance *= 3
+	else if(health <= maxHealth * 0.5)
+		prob_chance *= 2
+	if(prob(prob_chance))
+		var/special = pick(special_moves)
+		call(src, special)()
+	..()
+
+/mob/living/simple_animal/hostile/winter/santa/proc/self_heal()
+
+
+/mob/living/simple_animal/hostile/winter/santa/proc/self_heal_big()
+
+
+/mob/living/simple_animal/hostile/winter/santa/proc/present_mines()
+
+
+/mob/living/simple_animal/hostile/winter/santa/proc/gift_wrap()
+
+
+/mob/living/simple_animal/hostile/winter/santa/proc/summon_army()
+
+
 /mob/living/simple_animal/hostile/winter/santa/stage_1		//stage 1: slow melee
-	maxHealth = 150
-	health = 150
+	maxHealth = 175
+	health = 175
 	desc = "GET THE FAT MAN!"
 	next_stage = /mob/living/simple_animal/hostile/winter/santa/stage_2
 	death_message = "<span class='danger'>HO HO HO! YOU THOUGHT IT WOULD BE THIS EASY?!?</span>"
@@ -97,23 +178,29 @@
 	melee_damage_lower = 10
 	melee_damage_upper = 20
 
+	base_chance = 10	//chances: 10/20/30
+	special_moves = list("self_heal")
+
 /mob/living/simple_animal/hostile/winter/santa/stage_2		//stage 2: slow ranged
 	desc = "GET THE FAT MAN AGAIN!"
 	next_stage = /mob/living/simple_animal/hostile/winter/santa/stage_3
 	death_message = "<span class='danger'>YOU'VE BEEN VERY NAUGHTY! PREPARE TO DIE!</span>"
-	maxHealth = 200		//DID YOU REALLY BELIEVE IT WOULD BE THIS EASY!??!!
-	health = 200
+	maxHealth = 225		//DID YOU REALLY BELIEVE IT WOULD BE THIS EASY!??!!
+	health = 225
 	ranged = 1
 	projectiletype = /obj/item/projectile/ornament
 	retreat_distance = 5
 	minimum_distance = 5
 
+	base_chance = 15	//chances: 15/30/45
+	special_moves = list("self_heal", "present_mines")
+
 /mob/living/simple_animal/hostile/winter/santa/stage_3		//stage 3: fast rapidfire ranged
 	desc = "WHY WON'T HE DIE ALREADY!?"
 	next_stage = /mob/living/simple_animal/hostile/winter/santa/stage_4
 	death_message = "<span class='danger'>FACE MY FINAL FORM AND KNOW DESPAIR!</span>"
-	maxHealth = 250
-	health = 250
+	maxHealth = 275
+	health = 275
 	ranged = 1
 	rapid = 1
 	speed = 0	//he's lost some weight from the fighting
@@ -121,16 +208,22 @@
 	retreat_distance = 3
 	minimum_distance = 3
 
+	base_chance = 20	//chances: 20/40/60
+	special_moves = list("self_heal_big", "present_mines", "gift_wrap")
+
 /mob/living/simple_animal/hostile/winter/santa/stage_4		//stage 4: fast spinebreaker
 	name = "Final Form Santa"
 	desc = "WHAT THE HELL IS HE!?! WHY WON'T HE STAY DEAD!?!"
-	maxHealth = 300		//YOU FACE JARAX- I MEAN SANTA!
-	health = 300
+	maxHealth = 400		//YOU FACE JARAX- I MEAN SANTA!
+	health = 400
 	speed = 0	//he's lost some weight from the fighting
 
 	environment_smash = 2		//naughty walls must be punished too
 	melee_damage_lower = 20
 	melee_damage_upper = 30		//that's gonna leave a mark, for sure
+
+	base_chance = 25	//chances: 25/50/75
+	special_moves = list("self_heal_big", "present_mines", "gift_wrap", "summon_army")
 
 /mob/living/simple_animal/hostile/winter/santa/stage_4/death(gibbed)
 	to_chat(world, "<span class='notice'><hr></span>")
