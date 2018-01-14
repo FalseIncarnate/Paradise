@@ -61,7 +61,7 @@
 		P.icon_state = "giftcloset"
 
 	var/num_to_break = rand(1, breakables.len)
-	while(num_to_break)
+	while(num_to_break > 0)
 		var/obj/structure/S = pick(breakables)
 		breakables -= S
 		S.unbuckle_mob(TRUE)
@@ -132,6 +132,10 @@
 	ignore_dist = TRUE	//naughty cheese tactics cannot escape his list!
 	var/base_chance = 10
 	var/list/special_moves = list("self_heal")
+	var/using_special = FALSE
+
+	var/list/special_time = list("heal" = 0, "mine" = 0, "wrap" = 0, "adds" = 0)
+	var/list/special_cd = list("heal" = 300, "mine" = 400, "wrap" = 300, "adds" = 600)
 
 /mob/living/simple_animal/hostile/winter/santa/death(gibbed)
 	..()
@@ -143,30 +147,127 @@
 			qdel(src)	//hide the body
 
 /mob/living/simple_animal/hostile/winter/santa/process_ai()
-	var/prob_chance = base_chance
-	if(health <= maxHealth * 0.75)
-		prob_chance *= 3
-	else if(health <= maxHealth * 0.5)
-		prob_chance *= 2
-	if(prob(prob_chance))
-		var/special = pick(special_moves)
-		call(src, special)()
+	if(using_special)
+		return
+	if(target)
+		var/prob_chance = base_chance
+		if(health <= maxHealth * 0.75)
+			prob_chance *= 3
+		else if(health <= maxHealth * 0.5)
+			prob_chance *= 2
+		if(prob(prob_chance))
+			var/special = pick(special_moves)
+			if(call(src, special)())
+				return
+	else
+		if(health < maxHealth)
+			var/success = 0
+			if("self_heal_big" in special_moves)
+				success = self_heal_big()
+			else
+				success = self_heal()
+			if(success)
+				return
 	..()
 
 /mob/living/simple_animal/hostile/winter/santa/proc/self_heal()
-
+	if(world.time < special_time["heal"])
+		return 0
+	using_special = TRUE
+	visible_message("<span class='warning'>[name] stops to enjoy a refreshing mug of cocoa!</span>")
+	if(do_mob(src, src, 30, 1, 0))
+		if(!src || health <= 0)
+			adjustHealth(-50)
+			special_time["heal"] = world.time + special_cd["heal"]
+			using_special = FALSE
+			return 1
+	using_special = FALSE
+	return 0
 
 /mob/living/simple_animal/hostile/winter/santa/proc/self_heal_big()
-
+	if(world.time < special_time["heal"])
+		return 0
+	using_special = TRUE
+	visible_message("<span class='warning'>[name] begins devouring milk and cookies!</span>")
+	if(do_mob(src, src, 30, 1, 0))
+		if(!src || health <= 0)
+			adjustHealth(-100)
+			special_time["heal"] = world.time + special_cd["heal"]
+			using_special = FALSE
+			return 1
+	using_special = FALSE
+	return 0
 
 /mob/living/simple_animal/hostile/winter/santa/proc/present_mines()
-
+	if(world.time < special_time["mine"])
+		return 0
+	using_special = TRUE
+	var/list/possible_mine_turfs = list()
+	for(var/turf/T in orange(5, src))
+		if(!T.density)
+			continue
+		if(locate(/obj/effect/mine) in T)
+			continue
+		possible_mine_turfs += T
+	if(!possible_mine_turfs.len)
+		using_special = FALSE
+		return 0
+	var/num_mines = rand(1, possible_mine_turfs.len)
+	while(num_mines > 0)
+		var/turf/mine_turf = pick(possible_mine_turfs)
+		var/mine_type = pick(subtypesof(/obj/effect/mine/present))
+		new mine_type(mine_turf)
+		possible_mine_turfs -= mine_turf
+	special_time = world.time + special_cd["mine"]
+	using_special["mine"] = FALSE
+	return 1
 
 /mob/living/simple_animal/hostile/winter/santa/proc/gift_wrap()
+	if(world.time < special_time["wrap"])
+		return 0
+	using_special = TRUE
+	var/list/possible_targets = list()
+	for(var/mob/living/L in view())
+		if(L.stat == DEAD)
+			continue
+		if(faction_check(L))
+			continue
+		possible_targets += T
+	if(!possible_targets.len)
+		using_special = FALSE
+		return 0
+	var/mob/living/victim = pick(possible_targets)
+	var/obj/effect/spresent/wrap = new /obj/effect/spresent(get_turf(victim))
+	victim.forceMove(wrap)
 
+	special_time["wrap"] = world.time + special_cd["wrap"]
+	using_special = FALSE
+	return 1
 
 /mob/living/simple_animal/hostile/winter/santa/proc/summon_army()
+	if(world.time < special_time["adds"])
+		return 0
+	using_special = TRUE
 
+	var/list/possible_spawn_turfs = list()
+	for(var/turf/T in orange(5, src))
+		if(!T.density)
+			continue
+		possible_spawn_turfs += T
+	if(!possible_spawn_turfs.len)
+		using_special = FALSE
+		return 0
+	var/num_mobs = rand(1, possible_spawn_turfs.len)
+	var/list/spawn_types = subtypesof(/mob/living/simple_animal/hostile/winter) - typesof(/mob/living/simple_animal/hostile/winter/santa)
+	while(num_mobs > 0)
+		var/turf/spawn_turf = pick(possible_spawn_turfs)
+		var/mob_type = pick(spawn_types)
+		new mob_type(spawn_turf)
+		possible_spawn_turfs -= spawn_turf
+
+	special_time["adds"] = world.time + special_cd["adds"]
+	using_special = FALSE
+	return 1
 
 /mob/living/simple_animal/hostile/winter/santa/stage_1		//stage 1: slow melee
 	maxHealth = 175

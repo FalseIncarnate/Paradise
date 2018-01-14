@@ -173,3 +173,77 @@
 	spawn(duration)
 		victim.status_flags &= ~GOTTAGOREALLYFAST
 		to_chat(victim, "<span class='notice'>You slow down.</span>")
+
+
+
+/obj/effect/mine/present
+	name = "present"
+	desc = "A gift?"
+	icon = 'icons/obj/items.dmi'
+	icon_state = "gift"
+	faction = "winter"
+
+/obj/effect/mine/present/attackby(obj/item/I, mob/user, params)
+	if(iswirecutter(I))
+		to_chat(user, "<span class=notice'>You cut apart [src] carefully.</span>")
+		qdel(src)
+		return
+
+/obj/effect/mine/present/Crossed(AM as mob|obj)
+	if(istype(AM, /obj/mecha))
+		triggermine(AM)
+		return
+	..()
+
+
+/obj/effect/mine/present/explosive
+	icon_state = "gift_red"
+	var/range_devastation = 0
+	var/range_heavy = 1
+	var/range_light = 2
+	var/range_flash = 4
+
+/obj/effect/mine/present/explosive/mineEffect(mob/living/victim)
+	explosion(loc, range_devastation, range_heavy, range_light, range_flash)
+
+/obj/effect/mine/present/shock
+	icon_state = "gift_yellow"
+
+/obj/effect/mine/present/shock/mineEffect(mob/living/victim)
+	//Strike them down with a lightning bolt to complete the illusion (copied from the surge reagent overdose, probably could make this a general-use proc in the future)
+	playsound(get_turf(src), 'sound/effects/eleczap.ogg', 75, 1)
+	var/icon/I=new('icons/obj/zap.dmi',"lightningend")
+	I.Turn(-135)
+	var/obj/effect/overlay/beam/B = new(get_turf(src))
+	B.pixel_x = rand(-20, 0)
+	B.pixel_y = rand(-20, 0)
+	B.icon = I
+	//then actually do the damage/stun
+	if(iscarbon(victim))
+		var/mob/living/carbon/C = victim
+		C.electrocute_act(20, src, 1)
+	else
+		victim.apply_damage(20, BURN)
+
+/obj/effect/mine/present/emp
+	icon_state = "gift_blue"
+
+/obj/effect/mine/present/emp/mineEffect(mob/living/victim)
+	empulse(get_turf(src), 1, 2)
+
+/obj/effect/mine/present/mob
+	icon_state = "gift_purple"
+	var/mob/living/simple_animal/hostile/winter/surprise = null
+
+/obj/effect/mine/present/mob/New()
+	..()
+	if(!surprise)
+		var/list/spawn_types = subtypesof(/mob/living/simple_animal/hostile/winter) - typesof(/mob/living/simple_animal/hostile/winter/santa)
+		if(prob(75))	//25% chance of being a dud
+			surprise = pick(spawn_types)
+
+/obj/effect/mine/present/mob/mineEffect(mob/living/victim)
+	if(surprise)
+		new surprise(get_turf(src))
+	else
+		new /obj/effect/decal/cleanable/confetti(get_turf(src))
