@@ -83,14 +83,14 @@
 	input = /obj/item/reagent_containers/food/snacks/grown/soybeans
 	output = /obj/item/reagent_containers/food/snacks/soydope
 
-/datum/food_processor_process/spaghetti
+/datum/food_processor_process/raw_pasta
 	input = /obj/item/reagent_containers/food/snacks/doughslice
-	output = /obj/item/reagent_containers/food/snacks/spaghetti
-
+	output = /obj/item/reagent_containers/food/snacks/raw_pasta
+/*
 /datum/food_processor_process/macaroni
 	input = /obj/item/reagent_containers/food/snacks/spaghetti
 	output = /obj/item/reagent_containers/food/snacks/macaroni
-
+*/
 /datum/food_processor_process/parsnip
 	input = /obj/item/reagent_containers/food/snacks/grown/parsnip
 	output = /obj/item/reagent_containers/food/snacks/roastparsnip

@@ -3,11 +3,11 @@
 //	Raw Pasta		//
 //////////////////////
 
-/obj/item/reagent_containers/food/snacks/spaghetti
-	name = "Spaghetti"
-	desc = "A bundle of raw spaghetti."
+/obj/item/reagent_containers/food/snacks/raw_pasta
+	name = "raw pasta"
+	desc = "A bundle of raw pasta."
 	icon = 'icons/obj/food/pasta.dmi'
-	icon_state = "spaghetti"
+	icon_state = "raw_pasta"
 	filling_color = "#EDDD00"
 	list_reagents = list("nutriment" = 1, "vitamin" = 1)
 
@@ -24,16 +24,16 @@
 //	Pasta Dishes	//
 //////////////////////
 
-/obj/item/reagent_containers/food/snacks/boiledspaghetti
-	name = "Boiled Spaghetti"
-	desc = "A plain dish of noodles, this sucks."
+/obj/item/reagent_containers/food/snacks/cooked_pasta
+	name = "cooked pasta"
+	desc = "A plain dish of pasta, this sucks."
 	icon = 'icons/obj/food/pasta.dmi'
-	icon_state = "spaghettiboiled"
+	icon_state = "cooked_pasta"
 	trash = /obj/item/trash/plate
 	filling_color = "#FCEE81"
 	list_reagents = list("nutriment" = 2, "vitamin" = 1)
 
-/obj/item/reagent_containers/food/snacks/pastatomato
+/obj/item/reagent_containers/food/snacks/spaghetti
 	name = "spaghetti"
 	desc = "Spaghetti and crushed tomatoes. Just like your abusive father used to make!"
 	icon = 'icons/obj/food/pasta.dmi'
@@ -44,7 +44,7 @@
 	list_reagents = list("nutriment" = 6, "tomatojuice" = 10, "vitamin" = 4)
 
 /obj/item/reagent_containers/food/snacks/meatballspaghetti
-	name = "spaghetti & Meatballs"
+	name = "spaghetti & meatballs"
 	desc = "Now thats a nic'e meatball!"
 	icon = 'icons/obj/food/pasta.dmi'
 	icon_state = "meatballspaghetti"
@@ -61,7 +61,7 @@
 	list_reagents = list("nutriment" = 8, "synaptizine" = 10, "vitamin" = 6)
 
 /obj/item/reagent_containers/food/snacks/macncheese
-	name = "Macaroni cheese"
+	name = "macaroni & cheese"
 	desc = "One of the most comforting foods in the world. Apparently."
 	trash = /obj/item/trash/snack_bowl
 	icon = 'icons/obj/food/pasta.dmi'

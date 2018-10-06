@@ -351,12 +351,12 @@
 				 /obj/item/reagent_containers/food/snacks/grown/carrot, /obj/item/reagent_containers/food/snacks/grown/tomato)
 	result = /obj/item/reagent_containers/food/snacks/stewedsoymeat
 
-/datum/recipe/microwave/boiledspaghetti
+/datum/recipe/microwave/cooked_pasta
 	reagents = list("water" = 5)
 	items = list(
-		/obj/item/reagent_containers/food/snacks/spaghetti,
+		/obj/item/reagent_containers/food/snacks/raw_pasta,
 	)
-	result = /obj/item/reagent_containers/food/snacks/boiledspaghetti
+	result = /obj/item/reagent_containers/food/snacks/cooked_pasta
 
 /datum/recipe/microwave/boiledrice
 	reagents = list("water" = 5, "rice" = 10)
@@ -366,11 +366,11 @@
 	reagents = list("milk" = 5, "rice" = 10)
 	result = /obj/item/reagent_containers/food/snacks/ricepudding
 
-/datum/recipe/microwave/pastatomato
+/datum/recipe/microwave/spaghetti
 	reagents = list("water" = 5)
-	items = list(/obj/item/reagent_containers/food/snacks/spaghetti, /obj/item/reagent_containers/food/snacks/grown/tomato,
+	items = list(/obj/item/reagent_containers/food/snacks/cooked_pasta, /obj/item/reagent_containers/food/snacks/grown/tomato,
 				 /obj/item/reagent_containers/food/snacks/grown/tomato)
-	result = /obj/item/reagent_containers/food/snacks/pastatomato
+	result = /obj/item/reagent_containers/food/snacks/spaghetti
 
 /datum/recipe/microwave/poppypretzel
 	items = list(/obj/item/seeds/poppy, /obj/item/reagent_containers/food/snacks/dough)
@@ -379,7 +379,7 @@
 /datum/recipe/microwave/meatballspaggetti
 	reagents = list("water" = 5)
 	items = list(
-		/obj/item/reagent_containers/food/snacks/spaghetti,
+		/obj/item/reagent_containers/food/snacks/cooked_pasta,
 		/obj/item/reagent_containers/food/snacks/meatball,
 		/obj/item/reagent_containers/food/snacks/meatball,
 	)
@@ -388,7 +388,7 @@
 /datum/recipe/microwave/spesslaw
 	reagents = list("water" = 5)
 	items = list(
-		/obj/item/reagent_containers/food/snacks/spaghetti,
+		/obj/item/reagent_containers/food/snacks/cooked_pasta,
 		/obj/item/reagent_containers/food/snacks/meatball,
 		/obj/item/reagent_containers/food/snacks/meatball,
 		/obj/item/reagent_containers/food/snacks/meatball,
@@ -400,7 +400,7 @@
 	reagents = list("water" = 5, "milk" = 5)
 	items = list(
 		/obj/item/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/reagent_containers/food/snacks/macaroni,
+		/obj/item/reagent_containers/food/snacks/cooked_pasta,
 	)
 	result = /obj/item/reagent_containers/food/snacks/macncheese
 
