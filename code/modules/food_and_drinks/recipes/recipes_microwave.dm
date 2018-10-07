@@ -384,7 +384,7 @@
 		/obj/item/reagent_containers/food/snacks/meatball,
 	)
 	result = /obj/item/reagent_containers/food/snacks/meatballspaghetti
-
+/*
 /datum/recipe/microwave/spesslaw
 	reagents = list()
 	items = list(
@@ -395,7 +395,7 @@
 		/obj/item/reagent_containers/food/snacks/meatball,
 	)
 	result = /obj/item/reagent_containers/food/snacks/spesslaw
-
+*/
 /datum/recipe/microwave/macncheese
 	reagents = list("milk" = 5)
 	items = list(

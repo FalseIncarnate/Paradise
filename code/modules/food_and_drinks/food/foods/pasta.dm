@@ -51,7 +51,7 @@
 	trash = /obj/item/trash/plate
 	filling_color = "#DE4545"
 	list_reagents = list("nutriment" = 8, "synaptizine" = 5, "vitamin" = 4)
-
+/*
 /obj/item/reagent_containers/food/snacks/spesslaw
 	name = "Spesslaw"
 	desc = "A lawyer's favourite."
@@ -59,7 +59,7 @@
 	icon_state = "spesslaw"
 	filling_color = "#DE4545"
 	list_reagents = list("nutriment" = 8, "synaptizine" = 10, "vitamin" = 6)
-
+*/
 /obj/item/reagent_containers/food/snacks/macncheese
 	name = "macaroni & cheese"
 	desc = "One of the most comforting foods in the world. Apparently."
